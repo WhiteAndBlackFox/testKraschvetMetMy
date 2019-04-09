@@ -8,13 +8,13 @@ namespace testKraschvetMetMy
 {
     class parties
     {
-        public int id;
-        public nomenclatures nomenclature;
+        public int idParties;
+        public nomenclatures nomenclatures;
 
-        public parties(int id, nomenclatures nomenclature)
+        public parties(int id, nomenclatures nomenclatures)
         {
-            this.id = id;
-            this.nomenclature = nomenclature;
+            this.idParties = id;
+            this.nomenclatures = nomenclatures;
         }
 
         public parties(){}

@@ -8,13 +8,13 @@ namespace testKraschvetMetMy
 {
     class nomenclatures
     {
-        public int id;
-        public String name;
+        public int idNomenclatures;
+        public String nameNomenclatures;
 
         public nomenclatures(int id, string name)
         {
-            this.id = id;
-            this.name = name;
+            this.idNomenclatures = id;
+            this.nameNomenclatures = name;
         }
 
         public nomenclatures(){}

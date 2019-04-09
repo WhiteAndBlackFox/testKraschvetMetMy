@@ -8,12 +8,12 @@ namespace testKraschvetMetMy
 {
     class times
     {
-        public nomenclatures nomenclature;
+        public nomenclatures nomenclatures;
         public int iTime;
 
-        public times(nomenclatures nomenclature, int iTime)
+        public times(nomenclatures nomenclatures, int iTime)
         {
-            this.nomenclature = nomenclature;
+            this.nomenclatures = nomenclatures;
             this.iTime = iTime;
         }
 

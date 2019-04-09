@@ -59,6 +59,12 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="changeColor.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="changeColor.Designer.cs">
+      <DependentUpon>changeColor.cs</DependentUpon>
+    </Compile>
     <Compile Include="machineTools.cs" />
     <Compile Include="main.cs">
       <SubType>Form</SubType>
@@ -78,6 +84,9 @@
     </Compile>
     <Compile Include="times.cs" />
     <Compile Include="workSchedule.cs" />
+    <EmbeddedResource Include="changeColor.resx">
+      <DependentUpon>changeColor.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="main.resx">
       <DependentUpon>main.cs</DependentUpon>
     </EmbeddedResource>

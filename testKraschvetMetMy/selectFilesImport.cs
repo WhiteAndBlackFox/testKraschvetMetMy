@@ -67,8 +67,7 @@ namespace testKraschvetMetMy
                             {
                                 if (ckeckValidateImportFile(elm.Value.ToString(), dictValidFile[elm.Name.ToString()]))
                                 {
-                                    nomenclatures_textBox.Text = elm.Value.ToString();
-                                    
+                                    nomenclatures_textBox.Text = elm.Value.ToString();                                    
                                 }
                                 else
                                 {
