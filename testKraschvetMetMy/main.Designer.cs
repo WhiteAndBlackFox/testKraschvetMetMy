@@ -85,6 +85,7 @@
             this.экспортРезультатаToolStripMenuItem.Name = "экспортРезультатаToolStripMenuItem";
             this.экспортРезультатаToolStripMenuItem.Size = new System.Drawing.Size(248, 22);
             this.экспортРезультатаToolStripMenuItem.Text = "Экспорт результата";
+            this.экспортРезультатаToolStripMenuItem.Click += new System.EventHandler(this.экспортРезультатаToolStripMenuItem_Click);
             // 
             // toolStripSeparator1
             // 

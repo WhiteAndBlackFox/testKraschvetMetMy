@@ -6,10 +6,11 @@ using System.Threading.Tasks;
 
 namespace testKraschvetMetMy
 {
+    // Номенклатура
     class nomenclatures
     {
-        public int idNomenclatures;
-        public String nameNomenclatures;
+        public int idNomenclatures; // Ид
+        public String nameNomenclatures; // Название
 
         public nomenclatures(int id, string name)
         {

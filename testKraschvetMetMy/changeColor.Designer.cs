@@ -52,6 +52,7 @@
             this.Controls.Add(this.pbChangeColors);
             this.Name = "changeColor";
             this.Text = "Смена цвета";
+            this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.changeColor_FormClosed);
             this.Shown += new System.EventHandler(this.changeColor_Shown);
             ((System.ComponentModel.ISupportInitialize)(this.pbChangeColors)).EndInit();
             this.ResumeLayout(false);

@@ -4,13 +4,19 @@ using System.IO;
 using System.Xml.Linq;
 using OfficeOpenXml;
 using System.Collections.Generic;
+using NLog;
 
 namespace testKraschvetMetMy
 {
     public partial class selectFilesImport : Form
     {
+        // Для логирования
+        private static Logger logger = LogManager.GetCurrentClassLogger();
 
+        // Конфиг файл
         public string cfg = "cfg.xml";
+
+        // Массив изначальных цветов
         static string[] ColourValues = new string[] {
         "FF0000", "00FF00", "0000FF", "FFFF00", "FF00FF", "00FFFF", "000000",
         "800000", "008000", "000080", "808000", "800080", "008080", "808080",
@@ -29,12 +35,16 @@ namespace testKraschvetMetMy
 
         private void settings_Shown(object sender, EventArgs e)
         {
+            logger.Info("Проверяем существования конфигурационного файла");
             if (!File.Exists(cfg))
             {
+                logger.Info("Конфиг файл не создан, так что генерим его");
                 createCfgXML();
             }
 
+            logger.Info("Подгружаем данные с конфиг файла");
             var xdoc = XDocument.Load(cfg);
+            // Определяем какие поля должны быть для валидации
             Dictionary<string, List<string>> dictValidFile = new Dictionary<string, List<string>>() {
                 { "machine_tools", new List<string>() { "id", "name" } },
                 { "nomenclatures", new List<string>() { "id", "nomenclature" } },
@@ -42,6 +52,7 @@ namespace testKraschvetMetMy
                 { "times", new List<string>() { "machine tool id", "nomenclature id", "operation time" } },
             };
 
+            // Заполняем форму и проверяем валидацию
             foreach (XElement elm in xdoc.Descendants())
             {
                 switch (elm.Name.ToString())
@@ -50,6 +61,7 @@ namespace testKraschvetMetMy
                         {
                             if (elm.Value.ToString() != "")
                             {
+                                logger.Info(String.Format("Проверяем валидацию у оборудования"));
                                 if (ckeckValidateImportFile(elm.Value.ToString(), dictValidFile[elm.Name.ToString()]))
                                 {
                                     machine_tools_textBox.Text = elm.Value.ToString();
@@ -65,6 +77,7 @@ namespace testKraschvetMetMy
                         {
                             if (elm.Value.ToString() != "")
                             {
+                                logger.Info(String.Format("Проверяем валидацию у номенклатуры"));
                                 if (ckeckValidateImportFile(elm.Value.ToString(), dictValidFile[elm.Name.ToString()]))
                                 {
                                     nomenclatures_textBox.Text = elm.Value.ToString();                                    
@@ -82,6 +95,7 @@ namespace testKraschvetMetMy
 
                             if (elm.Value.ToString() != "")
                             {
+                                logger.Info(String.Format("Проверяем валидацию у партии"));
                                 if (ckeckValidateImportFile(elm.Value.ToString(), dictValidFile[elm.Name.ToString()]))
                                     parties_textBox.Text = elm.Value.ToString();
                                 else
@@ -93,6 +107,7 @@ namespace testKraschvetMetMy
                         {
                             if (elm.Value.ToString() != "")
                             {
+                                logger.Info(String.Format("Проверяем валидацию у времени"));
                                 if (ckeckValidateImportFile(elm.Value.ToString(), dictValidFile[elm.Name.ToString()]))
                                     times_textBox.Text = elm.Value.ToString();
                                 else
@@ -116,6 +131,7 @@ namespace testKraschvetMetMy
                 {
                     ExcelWorksheet ws = ep.Workbook.Worksheets[1];
                     for (int i = 0; i < namesValid.Count; i++) {
+                        // Проверка идет по заголовку
                         if (ws.Cells[1, i + 1].Text != namesValid[i]) {
                             DialogResult dr = MessageBox.Show("Проверьте верно ли выбран верный файл (проверьте, чтобы первая строка начиналась c обозначения столбцов).\n Хотите продолжить с выбранным файлом?", "Внимание!!", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
                             if (dr == DialogResult.No)
@@ -126,6 +142,7 @@ namespace testKraschvetMetMy
             }
             catch (Exception ex)
             {
+                logger.Error(String.Format("Произошла ошибка! \n Ошибка {0}", ex.Message));
                 MessageBox.Show(String.Format("Во вермя подгрузки файла произошла ошибка, проверьте существование файла и доступ до него. \n Ошибка: {0}", ex.Message), "Внимание!!", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return false;
             }
@@ -134,6 +151,8 @@ namespace testKraschvetMetMy
 
         private void getMetalColors(String fileName)
         {
+            //Генерим цвета для номенклатуры
+            logger.Info("Генерим цвета для номенклатуры");
             ExcelPackage ep = new ExcelPackage(new FileInfo(fileName));
             ExcelWorksheet ws = ep.Workbook.Worksheets[1];
             int countRow = ws.Dimension.End.Row;
@@ -142,6 +161,7 @@ namespace testKraschvetMetMy
             XDocument xDoc = XDocument.Load(cfg);
             XElement xCFG = xDoc.Element("cfg");
             XElement xMetalColors = xCFG.Element("metalcolors");
+            //Очищаем предыдущие настройки для будующего поколения :D
             xMetalColors.RemoveAll();
 
             Random rnd = new Random();
@@ -151,12 +171,11 @@ namespace testKraschvetMetMy
                 var id = ws.Cells[rowNum, 1];
                 var val = ws.Cells[rowNum, 2];
 
-                //Console.WriteLine(String.Format("{0} -> {1}", id.Text, val.Text));
-
+                // Выбираем рандомно цвет и записываем в конфиг
                 XElement xElement = new XElement("metalcolor",
                     new XElement("id", id.Text),
                     new XElement("metal", val.Text),
-                    new XElement("color", ColourValues[rnd.Next(0, ColourValues.Length - 1)]));
+                    new XElement("color", String.Format("#{0}", ColourValues[rnd.Next(0, ColourValues.Length - 1)])));
                 xMetalColors.Add(xElement);
             }
             xDoc.Save(cfg);
@@ -164,6 +183,7 @@ namespace testKraschvetMetMy
 
         private void createCfgXML()
         {
+            // Генерим новый конфиг файл, если не найшли предыдущий :D
             XDocument xdoc = new XDocument(new XElement("cfg",
                 new XElement("sourcefiles",
                     new XElement("machine_tools", null),
@@ -220,6 +240,8 @@ namespace testKraschvetMetMy
 
         private Boolean saveToCFG()
         {
+            //Сохраняем конфиг файл
+            logger.Info("Сохраняем конфиг файл");
             try
             {
                 if (machine_tools_textBox.Text == "" && nomenclatures_textBox.Text == "" && parties_textBox.Text == "" && times_textBox.Text == "")
@@ -231,6 +253,7 @@ namespace testKraschvetMetMy
                 XDocument xDoc = XDocument.Load(cfg);
                 XElement xCFG = xDoc.Element("cfg");
 
+                // Записываем в конфиг данные о выбранных файлах
                 foreach (XElement elm in xCFG.Elements("sourcefiles").Nodes<XElement>())
                 {
                     Console.WriteLine(String.Format("{0} -> {1}", elm.Name, elm.Value));
@@ -268,6 +291,7 @@ namespace testKraschvetMetMy
             }
             catch (Exception ex)
             {
+                logger.Error(String.Format("Произошла ошибка! \n Ошибка {0}", ex.Message));
                 MessageBox.Show(String.Format("Во вермя сохранения произошла ошибка! \n Ошибка: {0}", ex.Message), "Внимание!!", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 Application.Exit();
             }
@@ -277,7 +301,10 @@ namespace testKraschvetMetMy
         private void commit_Click(object sender, EventArgs e)
         {
             if (saveToCFG())
+            {
+                logger.Info("Закрываем форму selectFilesImport");
                 this.Close();
+            }
         }
         
     }

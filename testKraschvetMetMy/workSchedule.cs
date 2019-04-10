@@ -8,9 +8,9 @@ namespace testKraschvetMetMy
 {
     class workSchedule
     {
-        public parties parties;
-        public machineTools machineTools;
-        public int timeStart;
+        public parties parties; // Ссылка на партию
+        public machineTools machineTools; // Ссылка на машину
+        public int timeStart; // Время начала этапа
 
         public workSchedule(parties parties, machineTools machineTools, int timeStart)
         {

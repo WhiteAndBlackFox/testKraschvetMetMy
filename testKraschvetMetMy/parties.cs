@@ -6,10 +6,11 @@ using System.Threading.Tasks;
 
 namespace testKraschvetMetMy
 {
+    // Партия
     class parties
     {
-        public int idParties;
-        public nomenclatures nomenclatures;
+        public int idParties; // Ид
+        public nomenclatures nomenclatures; // Номенклатура в партии
 
         public parties(int id, nomenclatures nomenclatures)
         {

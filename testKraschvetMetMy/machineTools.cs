@@ -5,11 +5,11 @@ namespace testKraschvetMetMy
 {
     class machineTools
     {
-        private int id;
-        private string name;
-        private ArrayList arrTime;
-        public ArrayList arrWorks;
-        private int currentLoad;
+        private int id; // ИД
+        private string name; // Название
+        private ArrayList arrTime; // Массив связанных номенклатур с временем обработки
+        public ArrayList arrWorks; // Массив работ
+        private int currentLoad; // Текущий уровень загрузки считая от нулевого момента времени
 
         public machineTools(){}
 
@@ -47,6 +47,7 @@ namespace testKraschvetMetMy
             return currentLoad;
         }
 
+        /* Возвращает истину, если машина может обрабатывать номенклатуру */
         public bool checkNomenclature(int id)
         {
             foreach (times t in arrTime)
@@ -57,6 +58,8 @@ namespace testKraschvetMetMy
             return false;
         }
 
+        /* Добавляет номенклатуру и время ее обработки в описание оборудования
+        повторное вхождение номенклатуры - отбрасывается */
         public int addTime(times t)
         {
             if (!checkNomenclature(t.nomenclatures.idNomenclatures))
@@ -64,6 +67,7 @@ namespace testKraschvetMetMy
             return 0;
         }
 
+        // Возвращает время, требуемое на обработку номенклатуры по её ID
         public int getTimeForProcessingById(int id)
         {
             foreach (times t in arrTime)
@@ -74,6 +78,7 @@ namespace testKraschvetMetMy
             return -1;
         }
 
+        // Записать партию в план обработки машины
         public int AssignJob(parties p)
         {
             int iTime = getTimeForProcessingById(p.nomenclatures.idNomenclatures);
@@ -88,6 +93,7 @@ namespace testKraschvetMetMy
 
     }
 
+    // Предикаты для сортировки массива оборудования
     public class machineToolComparerCurrentLoad : IComparer
     {
         int IComparer.Compare(Object x, Object y)

@@ -8,8 +8,8 @@ namespace testKraschvetMetMy
 {
     class times
     {
-        public nomenclatures nomenclatures;
-        public int iTime;
+        public nomenclatures nomenclatures; // Ссылка на номенклатуру
+        public int iTime;  // Время обработки
 
         public times(nomenclatures nomenclatures, int iTime)
         {
